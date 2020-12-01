@@ -53,14 +53,15 @@ module plunger(radius=10, height=50, thickness=1)
 
 module cage(width=10, height=50, margin=3)
 {
+    cage_overlap=3;
     cage_width = width*2+margin*2;
-    cage_height = height;
+    cage_height = height+cage_overlap;
     post_thickness = 2;
     bottom_thickness = 2;
     cutout_xy = cage_width-2*post_thickness;
-    cutout_z = cage_height - bottom_thickness;
+    cutout_z = cage_height;// + bottom_thickness - cage_overlap;
     
-    translate([0,0,height/2])
+    translate([0,0,(height+cage_overlap)/2])
     difference(){
         // outer
         cube([cage_width, cage_width, cage_height], center=true);
@@ -123,7 +124,9 @@ plunger_thickness = 2;
 
 color("blue")
 cage(capsule_radius, plunger_height+capsule_height,0);
-translate([0,0,3])
+translate([0,0,plunger_thickness])
+base(capsule_radius, capsule_height);
+translate([0,0,plunger_thickness+capsule_height])
 plunger(capsule_radius, plunger_height, plunger_thickness);
 
 translate([2.5*capsule_radius,0,0])
@@ -135,8 +138,14 @@ enclosure(capsule_radius, plunger_height,0);
 translate([-3*capsule_radius,-15,-plunger_height-capsule_height])
 {
 //translate([0,0,-4])
+    color("green")
     cage(capsule_radius, plunger_height+capsule_height,0);
-    translate([0,0,capsule_height+3])
+    
+    translate([0,0,2])
+    color("brown")
+    base(capsule_radius, capsule_height);
+    
+    translate([0,0,capsule_height+2])
     color("red")
     plunger(capsule_radius, plunger_height, plunger_thickness);
 }

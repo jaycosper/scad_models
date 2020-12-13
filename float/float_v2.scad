@@ -51,10 +51,10 @@ module plunger(radius=10, height=50, thickness=1)
         depressor(radius, height, thickness);
 }
 
-module cage(width=10, height=50, margin=3)
+module cage(width=10, height=50)
 {
     cage_overlap=3;
-    cage_width = width*2+margin*2;
+    cage_width = width*2;
     cage_height = height+cage_overlap;
     post_thickness = 2;
     bottom_thickness = 2;
@@ -73,16 +73,16 @@ module cage(width=10, height=50, margin=3)
     }
 }
 
-module enclosure(width=10, height=50, margin=3)
+module enclosure(width=10, height=50, margin=2)
 {
     // detect box (upper)
-    detect_x = width*2+margin*2;
+    detect_x = width*2;
     detect_y = width*4;
     detect_z = height;
     // slot cutout
-    slot_x = width + 6;//margin*2;
-    slot_y = 4;//margin*2;
-    slot_z = detect_z *2;
+    slot_x = width + margin*3;
+    slot_y = margin*2;
+    slot_z = detect_z*2;
     // mount box (lower)
     mount_x = detect_x;
     mount_y = detect_y;
@@ -117,13 +117,23 @@ module enclosure(width=10, height=50, margin=3)
     }
 }
 
+module enclosure_final(width=10, height=50, cheight=50, margin=3)
+{
+    difference()
+    {
+        enclosure(width, height,2);
+        translate([45-3*capsule_radius,-15,-plunger_height-capsule_height])
+            cage(width+0.1, cheight);
+    }
+}
+
 capsule_radius = 15;
 capsule_height = 15;
 plunger_height = 50;
 plunger_thickness = 2;
 
 color("blue")
-cage(capsule_radius, plunger_height+capsule_height,0);
+cage(capsule_radius, plunger_height+capsule_height);
 translate([0,0,plunger_thickness])
 base(capsule_radius, capsule_height);
 translate([0,0,plunger_thickness+capsule_height])
@@ -133,13 +143,12 @@ translate([2.5*capsule_radius,0,0])
 base(capsule_radius, capsule_height);
 
 translate([-3*capsule_radius,0,0])
-enclosure(capsule_radius, plunger_height,0);
+enclosure(capsule_radius, plunger_height,2);
 
 translate([-3*capsule_radius,-15,-plunger_height-capsule_height])
 {
-//translate([0,0,-4])
     color("green")
-    cage(capsule_radius, plunger_height+capsule_height,0);
+    cage(capsule_radius, plunger_height+capsule_height);
     
     translate([0,0,2])
     color("brown")
@@ -149,3 +158,21 @@ translate([-3*capsule_radius,-15,-plunger_height-capsule_height])
     color("red")
     plunger(capsule_radius, plunger_height, plunger_thickness);
 }
+
+translate([100,0,0])
+enclosure_final(capsule_radius, plunger_height, plunger_height+capsule_height, 2);
+
+// STL builds
+// CAGE
+//cage(capsule_radius, plunger_height+capsule_height);
+
+// BASE
+//base(capsule_radius, capsule_height);
+
+// PLUNGER
+//plunger(capsule_radius, plunger_height, plunger_thickness);
+
+// ENCLOSURE
+//rotate([180,0,0])
+//translate([0,0,-plunger_height-10])
+//enclosure_final(capsule_radius, plunger_height, plunger_height+capsule_height, 2);

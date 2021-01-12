@@ -39,8 +39,8 @@ module motor_mount(shaft_rad=2.5, shaft_length=15, outer_rad=5)
 thickness = 2;
 align_hole = 1;
 spool_rad = 9.5;
-shaft_rad=3;
-shaft_length=15;
+shaft_rad=2.75;
+shaft_length=17;
 
 translate([0, 0, shaft_length*0.8])
 spool_mount(spool_rad, spool_rad+thickness, 20);

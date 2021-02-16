@@ -37,6 +37,29 @@ module motor_mount(inner_rad=34, width=15, outer_rad=40, width2=6)
     }
 }
 
+module wall_mount_base(leg_length=50, leg_width=15, leg_thickness=6)
+{
+    difference()
+    {
+        hull(){
+            cylinder(r=leg_width, leg_thickness);
+            translate([leg_length,leg_length,0])
+                cylinder(r=leg_width, leg_thickness);
+            translate([leg_length,-leg_length,0])
+                cylinder(r=leg_width, leg_thickness);
+        }
+        scale([0.75, 0.75, 2])
+            translate([10,0,-1])
+            hull(){
+                cylinder(r=leg_width, leg_thickness);
+                translate([leg_length,leg_length,0])
+                    cylinder(r=leg_width, leg_thickness);
+                translate([leg_length,-leg_length,0])
+                    cylinder(r=leg_width, leg_thickness);
+            }
+    }
+
+}
 module wall_mount(leg_length=50, leg_width=15, leg_thickness=6, cutout_rad=15, cutout_width=15, cutout_width2=6)
 {
     bracket_rad = leg_length/8;
@@ -44,14 +67,7 @@ module wall_mount(leg_length=50, leg_width=15, leg_thickness=6, cutout_rad=15, c
     rotate(-45,[0,0,1])
     difference(){
         union(){
-            hull(){
-                translate([0,0,0])
-                    cylinder(r=leg_width, leg_thickness);
-                translate([leg_length,leg_length,0])
-                    cylinder(r=leg_width, leg_thickness);
-                translate([leg_length,-leg_length,0])
-                    cylinder(r=leg_width, leg_thickness);
-            }
+            wall_mount_base(leg_length, leg_width, leg_thickness);
             hull(){
                 translate([leg_length,leg_length,0])
                     cylinder(r=leg_width, bracket_thickness);
@@ -62,18 +78,16 @@ module wall_mount(leg_length=50, leg_width=15, leg_thickness=6, cutout_rad=15, c
         // cutout for motor mount
         translate([0,0,-0.1])
             cylinder(r=cutout_rad+cutout_width, cutout_width+cutout_width2+0.1);
-    }
         // cutout for mounting holes
         {rotate(90,[0,1,0])
-            rotate(45,[1,0,0])
-                translate([-bracket_thickness/2-leg_width/2,-8*leg_width,leg_length-leg_width-0.1])
-                    cylinder(r=3, 4*leg_width);
+            translate([-bracket_thickness/2-leg_width/2,-8*leg_width,leg_length-leg_width-0.1])
+                cylinder(r=3, 4*leg_width);
         }
         {rotate(90,[0,1,0])
-            rotate(45,[1,0,0])
-                translate([-bracket_thickness/2-leg_width/2,8*leg_width,leg_length-leg_width-0.1])
-                    cylinder(r=3, 4*leg_width);
+            translate([-bracket_thickness/2-leg_width/2,8*leg_width,leg_length-leg_width-0.1])
+                cylinder(r=3, 4*leg_width);
         }
+    }
 }
 
 module motor_fastner(inner_rad=34, thickness=15, outer_rad=40, width2=6)
@@ -100,9 +114,7 @@ fastner_width=2;
 fastner_thickness=3;
 
 motor_mount(inner_mount_rad, inner_mount_width, outer_mount_rad, outer_mount_width);
-
-translate([0,-75,0])
-    wall_mount(bracket_length, 5, 6, inner_mount_width, outer_mount_rad, outer_mount_width);
+wall_mount(bracket_length, 5, 6, inner_mount_width, outer_mount_rad, outer_mount_width);
 
 translate([0,75,0])
     motor_fastner(motor_rad, inner_mount_width, outer_mount_rad, fastner_width);
